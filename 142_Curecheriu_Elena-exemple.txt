@@ -1,0 +1,103 @@
+--cerinta1
+WITH ALBUM_DETAILS AS (
+    SELECT
+        A.ID_ALBUM,
+        A.TITLU AS TITLU,
+        ART.NUME AS ARTIST,
+        TO_CHAR(A.DATA_LANSARE, 'YYYY') AS ANUL_LANSARII,
+        TO_CHAR(A.DATA_LANSARE, 'MM') AS LUNA_LANSARII,
+        LENGTH(A.TITLU) AS LUNGIME_TITLU,
+        UPPER(A.TITLU) AS TITLU_UPPERCASE,
+        LOWER(A.TITLU) AS TITLU_LOWERCASE
+    FROM
+        ALBUM A
+    JOIN
+        ARTIST ART ON A.ID_ARTIST = ART.ID_ARTIST
+)
+SELECT
+    AD.TITLU,
+    AD.ARTIST,
+    AD.ANUL_LANSARII,
+    AD.LUNA_LANSARII,
+    AD.LUNGIME_TITLU,
+    AD.TITLU_UPPERCASE,
+    AD.TITLU_LOWERCASE
+FROM
+    ALBUM_DETAILS AD;
+    
+    
+--cerinta 2
+SELECT A.TITLU AS "TITLU",
+       ART.NUME AS "ARTIST",
+       CASE
+           WHEN G.NUME IS NULL THEN 'fara gen'
+           ELSE G.NUME
+       END AS "GEN",
+       A.DURATA AS "DURATA",
+       CASE
+           WHEN G.NUME IS NULL THEN 'fara gen'
+           WHEN G.NUME = 'pop' THEN 'pop'
+           WHEN G.NUME = 'rock' THEN 'rock'
+           ELSE 'alt gen'
+       END AS "MESSAGE"
+FROM ALBUM A
+JOIN ARTIST ART ON A.ID_ARTIST = ART.ID_ARTIST
+LEFT JOIN GEN_ALBUM GA ON A.ID_ALBUM = GA.ID_ALBUM
+LEFT JOIN GEN G ON GA.ID_GEN = G.ID_GEN
+ORDER BY A.DURATA ASC
+FETCH FIRST 5 ROWS ONLY;
+
+
+--cerinta 3
+WITH AVG_PRICE AS (
+    SELECT AVG(pret) AS average_price
+    FROM ABONAMENT
+),
+USER_PLAYLIST_COUNT AS (
+    SELECT U.nume AS user_name, NVL(A.pret, 0) AS subscription_price, P.nume AS playlist_name, COUNT(MP.id_melodie) AS song_count
+    FROM UTILIZATOR U
+    JOIN ABONAMENT A ON U.id_abonament = A.id_abonament
+    JOIN PLAYLIST P ON U.id_utilizator = P.id_utilizator
+    JOIN MELODIE_PLAYLIST MP ON P.id_playlist = MP.id_playlist
+    GROUP BY U.nume, A.pret, P.nume
+)
+SELECT user_name, subscription_price, playlist_name
+FROM USER_PLAYLIST_COUNT
+WHERE subscription_price < (SELECT average_price FROM AVG_PRICE) AND song_count >= 2
+ORDER BY user_name ASC;
+
+--cerinta 4
+SELECT
+    CD.NUME AS "CASA_DISCURI",
+    CONCAT(CONCAT(CD.NUME_DETINATOR, ' '), CD.PRENUME_DETINATOR) AS "DETINATOR",
+    NVL(A.NUME, 'N/A') AS "ARTIST"
+FROM
+    CASA_DISCURI CD
+JOIN
+    ARTIST A ON CD.ID_CASA_DISCURI = A.ID_CASA_DISCURI
+WHERE
+    CD.NUME LIKE '%Records%' OR CD.NUME LIKE '%Corporation%'
+ORDER BY
+    CD.NUME ASC;
+    
+--cerinta 5
+SELECT 
+    U.NUME AS "NUME",
+    NVL(U.EMAIL, 'N/A') AS "EMAIL",
+    DECODE(U.TARA, 'RO', 'Romania', 'N/A') AS "TARA"
+FROM 
+    UTILIZATOR U
+JOIN 
+    ABONAMENT A ON U.ID_ABONAMENT = A.ID_ABONAMENT
+JOIN 
+    PLAYLIST P ON U.ID_UTILIZATOR = P.ID_UTILIZATOR
+JOIN 
+    MELODIE_PLAYLIST MP ON P.ID_PLAYLIST = MP.ID_PLAYLIST
+WHERE 
+    A.TIP_ABONAMENT = 'student' AND P.DATA_CREARE > TO_DATE('13-OCT-2015', 'DD-MON-YYYY')
+GROUP BY 
+    P.ID_PLAYLIST, U.NUME, U.EMAIL, U.TARA
+HAVING 
+    COUNT(MP.ID_MELODIE) >= 2
+ORDER BY 
+    U.NUME ASC;

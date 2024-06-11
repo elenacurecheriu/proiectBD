@@ -1,0 +1,446 @@
+CREATE SEQUENCE UTILIZATOR_SEQ START WITH 1;
+CREATE SEQUENCE ABONAMENT_SEQ START WITH 1;
+CREATE SEQUENCE PLAYLIST_SEQ START WITH 1;
+CREATE SEQUENCE MELODIE_SEQ START WITH 1;
+CREATE SEQUENCE GEN_SEQ START WITH 1;
+CREATE SEQUENCE ALBUM_SEQ START WITH 1;
+CREATE SEQUENCE ARTIST_SEQ START WITH 1;
+CREATE SEQUENCE CASA_DISCURI_SEQ START WITH 1;
+
+
+--ABONAMENT
+CREATE TABLE ABONAMENT(
+    id_abonament INT DEFAULT ABONAMENT_SEQ.NEXTVAL PRIMARY KEY,
+    tip_abonament VARCHAR(100),
+    CONSTRAINT tip_abonament_check CHECK (tip_abonament IN ('student', 'standard', 'business')),
+    pret DECIMAL(10,2),
+    data_incepere DATE,
+    metoda_plata VARCHAR(100),
+    CONSTRAINT metoda_plata_check CHECK (metoda_plata IN ('paypal', 'visa', 'gift card'))
+);
+
+INSERT INTO ABONAMENT (tip_abonament, pret, data_incepere, metoda_plata) VALUES ('standard', 5.99, '12-SEP-2023', 'visa');
+
+INSERT INTO ABONAMENT (tip_abonament, pret, data_incepere, metoda_plata) VALUES ('student', 2.99, '03-NOV-2015', 'paypal');
+
+INSERT INTO ABONAMENT (tip_abonament, pret, data_incepere, metoda_plata) VALUES ('business', 16.20, '14-JUN-2020', 'visa');
+
+INSERT INTO ABONAMENT (tip_abonament, pret, data_incepere, metoda_plata) VALUES ('standard', 5.99, '09-OCT-2019', 'gift card');
+
+INSERT INTO ABONAMENT (tip_abonament, pret, data_incepere, metoda_plata) VALUES ('student', 2.99, '15-APR-2022', 'paypal');
+
+INSERT INTO ABONAMENT (tip_abonament, pret, data_incepere, metoda_plata) VALUES ('student', 2.99, '12-DEC-2012', 'gift card');
+
+SELECT *
+FROM ABONAMENT
+ORDER BY ID_ABONAMENT;
+
+--UTILIZATOR
+
+CREATE TABLE UTILIZATOR(
+    id_utilizator INT DEFAULT UTILIZATOR_SEQ.NEXTVAL PRIMARY KEY,
+    id_abonament INT,
+    nume VARCHAR(255),
+    email VARCHAR(255),
+    data_inregistrare DATE,
+    tara VARCHAR(3),
+    FOREIGN KEY(id_abonament) REFERENCES ABONAMENT(id_abonament)
+);
+
+INSERT INTO UTILIZATOR (id_abonament, nume, email, data_inregistrare, tara) VALUES (1, 'elenacurecheriu', 'elena.curecheriu@s.unibuc.ro', '12-SEP-2005', 'RO');
+
+INSERT INTO UTILIZATOR (id_abonament, nume, email, data_inregistrare, tara) VALUES (2, 'anastasia', 'anastasiac@yahoo.com', '03-NOV-2008', 'RO');
+
+INSERT INTO UTILIZATOR (id_abonament, nume, email, data_inregistrare, tara) VALUES (3, 'pinkfluffyunicorns', 'dancingonrainbows@gmail.com', '21-MAY-2018', 'US');
+
+INSERT INTO UTILIZATOR (id_abonament, nume, email, data_inregistrare, tara) VALUES (4, 'costinel777', 'costinel777@hotmail.com', '04-APR-2014', 'JP');
+
+INSERT INTO UTILIZATOR (id_abonament, nume, email, data_inregistrare, tara) VALUES (5, 'Marinica1959', 'ilikelemons@gmail.com', '07-JUL-2023', 'SK');
+
+INSERT INTO UTILIZATOR (id_abonament, nume, email, data_inregistrare, tara) VALUES (6, 'ClaudiaAnghel', 'claudiaanghel@yahoo.fr', '23-JAN-2020', 'RO');
+
+SELECT *
+FROM UTILIZATOR
+ORDER BY id_utilizator;
+
+--PLAYLIST
+
+CREATE TABLE PLAYLIST(
+    id_playlist INT DEFAULT PLAYLIST_SEQ.NEXTVAL PRIMARY KEY,
+    id_utilizator INT,
+    nume VARCHAR(255),
+    data_creare DATE,
+    FOREIGN KEY(id_utilizator) REFERENCES UTILIZATOR(id_utilizator)
+);
+
+INSERT INTO PLAYLIST (id_utilizator, nume, data_creare) VALUES (1, 'My favourite songs', '07-JUN-2024');
+
+INSERT INTO PLAYLIST (id_utilizator, nume, data_creare) VALUES (2, 'Chill Vibes', '15-FEB-2023');
+
+INSERT INTO PLAYLIST (id_utilizator, nume, data_creare) VALUES (3, 'Workout Hits', '23-MAR-2024');
+
+INSERT INTO PLAYLIST (id_utilizator, nume, data_creare) VALUES (2, 'Road Trip', '08-APR-2022');
+
+INSERT INTO PLAYLIST (id_utilizator, nume, data_creare) VALUES (3, 'Party Playlist', '11-MAY-2023');
+
+INSERT INTO PLAYLIST (id_utilizator, nume, data_creare) VALUES (3, 'Relaxing Music', '30-SEP-2021');
+
+INSERT INTO PLAYLIST (id_utilizator, nume, data_creare) VALUES (1, 'Study Tunes', '17-NOV-2023');
+
+INSERT INTO PLAYLIST (id_utilizator, nume, data_creare) VALUES (5, 'Throwback Hits', '22-DEC-2022');
+
+SELECT *
+FROM PLAYLIST
+ORDER BY id_playlist;
+
+--CASA DISCURI
+
+CREATE TABLE CASA_DISCURI(
+    id_casa_discuri INT DEFAULT CASA_DISCURI_SEQ.NEXTVAL PRIMARY KEY,
+    nume VARCHAR(255),
+    nume_detinator VARCHAR(255),
+    prenume_detinator VARCHAR(255),
+    an_infiintare INT
+);
+
+
+INSERT INTO CASA_DISCURI(nume, nume_detinator, prenume_detinator, an_infiintare) VALUES ('Universal Music', 'Grainge', 'Lucian', 1934);
+
+INSERT INTO CASA_DISCURI(nume, nume_detinator, prenume_detinator, an_infiintare) VALUES ('Columbia Records', 'Perry', 'Ron', 1889);
+
+INSERT INTO CASA_DISCURI(nume, nume_detinator, prenume_detinator, an_infiintare) VALUES ('Cat Music', 'Golea', 'Sorin', 1991);
+
+INSERT INTO CASA_DISCURI(nume, nume_detinator, prenume_detinator, an_infiintare) VALUES ('Atlantic Records', 'Kallman', 'Craig', 1947);
+
+INSERT INTO CASA_DISCURI(nume, nume_detinator, prenume_detinator, an_infiintare) VALUES ('HaHaHa Production', 'Maria', 'Andrei Tiberiu', 2009);
+
+INSERT INTO CASA_DISCURI(nume, nume_detinator, prenume_detinator, an_infiintare) VALUES ('Global Records', 'Lucian', 'Stefan', 2008);
+
+INSERT INTO CASA_DISCURI(nume, nume_detinator, prenume_detinator, an_infiintare) VALUES ('Hybe Corporation', 'Bang', 'Si-Hyuk', 2005);
+
+SELECT *
+FROM CASA_DISCURI
+ORDER BY id_casa_discuri;
+
+--ARTIST
+
+CREATE TABLE ARTIST(
+    id_artist INT DEFAULT ARTIST_SEQ.NEXTVAL PRIMARY KEY,
+    id_casa_discuri INT,
+    nume VARCHAR(255),
+    an_debut INT,
+    FOREIGN KEY(id_casa_discuri) REFERENCES CASA_DISCURI(id_casa_discuri)
+);
+
+INSERT INTO ARTIST(id_casa_discuri, nume, an_debut) VALUES (1, 'Lana del Rey', 2012);
+
+INSERT INTO ARTIST(id_casa_discuri, nume, an_debut) VALUES (7, 'BTS', 2013);
+
+INSERT INTO ARTIST(id_casa_discuri, nume, an_debut) VALUES (1, 'Ariana Grande', 2013);
+
+INSERT INTO ARTIST(id_casa_discuri, nume, an_debut) VALUES (2, 'Olivia Rodrigo', 2021);
+
+INSERT INTO ARTIST(id_casa_discuri, nume, an_debut) VALUES (5, 'Arctic Monkeys', 2002);
+
+INSERT INTO ARTIST(id_casa_discuri, nume, an_debut) VALUES (3, 'RM', 2018);
+
+INSERT INTO ARTIST(id_casa_discuri, nume, an_debut) VALUES (6, 'The Neighbourhood', 2011);
+
+INSERT INTO ARTIST(id_casa_discuri, nume, an_debut) VALUES (4, 'Billie Eilish', 2017);
+
+INSERT INTO ARTIST(id_casa_discuri, nume, an_debut) VALUES (4, 'Dua Lipa', 2017);
+
+INSERT INTO ARTIST(id_casa_discuri, nume, an_debut) VALUES (7, 'EXO', 2012);
+
+INSERT INTO ARTIST(id_casa_discuri, nume, an_debut) VALUES (7, 'NewJeans', 2022);
+
+SELECT *
+FROM ARTIST
+ORDER BY id_artist;
+
+--GEN
+
+CREATE TABLE GEN(
+    id_gen INT DEFAULT GEN_SEQ.NEXTVAL PRIMARY KEY,
+    nume VARCHAR(255)
+);
+
+INSERT INTO GEN(nume) VALUES ('pop');
+
+INSERT INTO GEN(nume) VALUES ('rock');
+
+INSERT INTO GEN(nume) VALUES ('k-pop');
+
+INSERT INTO GEN(nume) VALUES ('indie');
+
+INSERT INTO GEN(nume) VALUES ('rap');
+
+INSERT INTO GEN(nume) VALUES ('trap');
+
+INSERT INTO GEN(nume) VALUES ('hip hop');
+
+INSERT INTO GEN(nume) VALUES ('jazz');
+
+INSERT INTO GEN(nume) VALUES ('dubstep');
+
+INSERT INTO GEN(nume) VALUES ('disco');
+
+INSERT INTO GEN(nume) VALUES ('country');
+
+INSERT INTO GEN(nume) VALUES ('house');
+
+INSERT INTO GEN(nume) VALUES ('metal');
+
+INSERT INTO GEN(nume) VALUES ('latino');
+
+SELECT *
+FROM GEN
+ORDER BY id_gen;
+
+--ALBUM
+
+CREATE TABLE ALBUM(
+    id_album INT DEFAULT ALBUM_SEQ.NEXTVAL PRIMARY KEY,
+    id_artist INT,
+    id_gen INT,
+    titlu VARCHAR(255),
+    data_lansare DATE,
+    durata INT,
+    FOREIGN KEY(id_gen) REFERENCES GEN(id_gen),
+    FOREIGN KEY(id_artist) REFERENCES ARTIST(id_artist)
+);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (1, 4, 'Born To Die', '27-JAN-2012', 2968);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (1, 1, 'Born To Die', '27-JAN-2012', 2968);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (1, 1, 'Ultraviolence', '13-JUN-2014', 2637);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (1, 4, 'Ultraviolence', '13-JUN-2014', 2637);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (1, 11, 'Chemtrails Over The Country Club', '19-MAR-2021', 2453);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (2, 3, 'Love Yourself: Tear', '25-MAY-2018', 2968);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (2, 3, 'Wings', '09-OCT-2016', 2013);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (3, 1, 'eternal sunshine', '08-MAR-2024', 2324);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (3, 1, 'Dangerous Woman', '20-MAY-2016', 2338);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (4, 1, 'Sour', '21-MAY-2021', 1968);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (4, 2, 'Sour', '21-MAY-2021', 1968);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (5, 4, 'Favourite Worst Nightmare', '23-APR-2007', 2238);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (5, 2, 'Favourite Worst Nightmare', '23-APR-2007', 2238);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (6, 3, 'mono.', '23-OCT-2018', 2448);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (6, 3, 'Indigo', '02-DEC-2022', 1908);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (7, 4, 'Wiped Out!', '30-OCT-2015', 2718);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (7, 1, 'Wiped Out!', '30-OCT-2015', 2718);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (7, 2, 'Wiped Out!', '30-OCT-2015', 2718);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (7, 4, 'I Love You.', '22-APR-2013', 2687);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (8, 4, 'dont smile at me', '11-AUG-2017', 2328);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (8, 1, 'Happier Than Ever', '30-JUL-2021', 1923);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (9, 10, 'Future Nostalgia', '27-MAR-2020', 2024);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (9, 1, 'Future Nostalgia', '27-MAR-2020', 2024);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (10, 3, 'The War', '18-JUL-2017', 2783);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (10, 3, 'EXODUS', '30-MAR-2015', 2777);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (11, 3, 'OBSESSION', '27-NOV-2019', 2323);
+
+INSERT INTO ALBUM(id_artist, id_gen, titlu, data_lansare, durata) VALUES (11, 3, 'Get Up', '21-JUL-2023', 2222);
+
+SELECT *
+FROM ALBUM
+ORDER BY id_album;
+
+--MELODIE
+
+CREATE TABLE MELODIE(
+    id_melodie INT DEFAULT MELODIE_SEQ.NEXTVAL PRIMARY KEY,
+    id_artist INT,
+    id_gen INT,
+    id_album INT,
+    titlu VARCHAR(255),
+    durata INT,
+    data_lansare DATE,
+    FOREIGN KEY(id_artist) REFERENCES ARTIST(id_artist),
+    FOREIGN KEY(id_gen) REFERENCES GEN(id_gen),
+    FOREIGN KEY(id_album) REFERENCES ALBUM(id_album)
+);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (1, 4, 1, 'Video Games', 295, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (1, 4, 3, 'Shades Of Cool', 243, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (1, 1, 3, 'Shades Of Cool', 243, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (1, 11, 5, 'Chemtrails Over The Country Club', 233, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (2, 3, 6, 'FAKE LOVE', 287, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (2, 3, 7, 'Blood Sweat and Tears', 213, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (3, 1, 8, 'bye', 233, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (3, 1, 9, 'Into You', 277, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (4, 4, 10, 'traitor', 260, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (4, 2, 10, 'traitor', 260, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (4, 1, 10, 'drivers license', 188, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (5, 2, 12, '505', 200, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (6, 3, 14, 'forever rain', 205, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (2, 3, 14, 'forever rain', 205, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (6, 3, 14, 'moonchild', 160, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (2, 3, 14, 'moonchild', 160, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (6, 3, 15, 'Wild Flower', 200, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (2, 3, 15, 'Wild Flower', 200, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (7, 4, 16, 'Daddy Issues', 295, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (7, 4, 18, 'Sweater Weather', 242, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (8, 4, 20, 'copycat', 234, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (8, 1, 21, 'Happier Than Ever', 234, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (9, 10, 22, 'Levitating', 199, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (10, 3, 24, 'Ko Ko Bop', 180, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (10, 3, 24, 'Going Crazy', 300, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (10, 3, 25, 'Call Me Baby', 233, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (10, 3, 26, 'OBSESSION', 176, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (11, 3, 27, 'ETA', 245, NULL);
+
+INSERT INTO MELODIE(id_artist, id_gen, id_album, titlu, durata, data_lansare) VALUES (11, 3, 27, 'Get Up', 119, NULL);
+
+SELECT *
+FROM MELODIE
+ORDER BY id_melodie;
+
+--tabelele asociative
+
+--gen_album
+
+CREATE TABLE GEN_ALBUM(
+    id_gen INT,
+    id_album INT,
+    PRIMARY KEY(id_gen, id_album),
+    FOREIGN KEY(id_gen) REFERENCES GEN(id_gen),
+    FOREIGN KEY(id_album) REFERENCES ALBUM(id_album)
+);
+
+INSERT INTO GEN_ALBUM(id_gen, id_album) VALUES (1, 1);
+INSERT INTO GEN_ALBUM(id_gen, id_album) VALUES (4, 1);
+INSERT INTO GEN_ALBUM(id_gen, id_album) VALUES (1, 3);
+INSERT INTO GEN_ALBUM(id_gen, id_album) VALUES (4, 3);
+INSERT INTO GEN_ALBUM(id_gen, id_album) VALUES (1, 10);
+INSERT INTO GEN_ALBUM(id_gen, id_album) VALUES (2, 10);
+INSERT INTO GEN_ALBUM(id_gen, id_album) VALUES (4, 12);
+INSERT INTO GEN_ALBUM(id_gen, id_album) VALUES (1, 16);
+INSERT INTO GEN_ALBUM(id_gen, id_album) VALUES (2, 16);
+INSERT INTO GEN_ALBUM(id_gen, id_album) VALUES (4, 16);
+INSERT INTO GEN_ALBUM(id_gen, id_album) VALUES (1, 22);
+INSERT INTO GEN_ALBUM(id_gen, id_album) VALUES (10, 22);
+
+SELECT *
+FROM GEN_ALBUM
+ORDER BY id_album;
+
+--gen_melodie
+
+
+CREATE TABLE GEN_MELODIE(
+    id_gen INT,
+    id_melodie INT,
+    PRIMARY KEY(id_gen, id_melodie),
+    FOREIGN KEY(id_gen) REFERENCES GEN(id_gen),
+    FOREIGN KEY(id_melodie) REFERENCES MELODIE(id_melodie)
+);
+
+INSERT INTO GEN_MELODIE(id_gen, id_melodie) VALUES (4, 2);
+INSERT INTO GEN_MELODIE(id_gen, id_melodie) VALUES (1, 2);
+INSERT INTO GEN_MELODIE(id_gen, id_melodie) VALUES (4, 9);
+INSERT INTO GEN_MELODIE(id_gen, id_melodie) VALUES (2, 9);
+
+SELECT *
+FROM GEN_MELODIE
+ORDER BY id_melodie;
+
+
+--melodie_playlist
+
+CREATE TABLE MELODIE_PLAYLIST(
+    id_melodie INT,
+    id_playlist INT,
+    PRIMARY KEY(id_melodie, id_playlist),
+    FOREIGN KEY(id_melodie) REFERENCES MELODIE(id_melodie),
+    FOREIGN KEY(id_playlist) REFERENCES PLAYLIST(id_playlist)
+);
+
+
+INSERT INTO MELODIE_PLAYLIST(id_melodie, id_playlist) VALUES (1,1);
+INSERT INTO MELODIE_PLAYLIST(id_melodie, id_playlist) VALUES (2,1);
+INSERT INTO MELODIE_PLAYLIST(id_melodie, id_playlist) VALUES (9,1);
+INSERT INTO MELODIE_PLAYLIST(id_melodie, id_playlist) VALUES (25,1);
+INSERT INTO MELODIE_PLAYLIST(id_melodie, id_playlist) VALUES (26,1);
+INSERT INTO MELODIE_PLAYLIST(id_melodie, id_playlist) VALUES (17,1);
+INSERT INTO MELODIE_PLAYLIST(id_melodie, id_playlist) VALUES (13,1);
+INSERT INTO MELODIE_PLAYLIST(id_melodie, id_playlist) VALUES (1,2);
+INSERT INTO MELODIE_PLAYLIST(id_melodie, id_playlist) VALUES (8,2);
+INSERT INTO MELODIE_PLAYLIST(id_melodie, id_playlist) VALUES (2,3);
+INSERT INTO MELODIE_PLAYLIST(id_melodie, id_playlist) VALUES (7,3);
+INSERT INTO MELODIE_PLAYLIST(id_melodie, id_playlist) VALUES (12,5);
+
+SELECT *
+FROM MELODIE_PLAYLIST
+ORDER BY id_playlist;
+
+--artist_melodie
+
+CREATE TABLE ARTIST_MELODIE(
+    id_artist INT,
+    id_melodie INT,
+    PRIMARY KEY(id_artist, id_melodie),
+    FOREIGN KEY(id_artist) REFERENCES ARTIST(id_artist),
+    FOREIGN KEY(id_melodie) REFERENCES MELODIE(id_melodie)
+);
+
+INSERT INTO ARTIST_MELODIE(id_artist, id_melodie) VALUES(6, 13);
+INSERT INTO ARTIST_MELODIE(id_artist, id_melodie) VALUES(2, 13);
+INSERT INTO ARTIST_MELODIE(id_artist, id_melodie) VALUES(6, 15);
+INSERT INTO ARTIST_MELODIE(id_artist, id_melodie) VALUES(2, 15);
+INSERT INTO ARTIST_MELODIE(id_artist, id_melodie) VALUES(6, 17);
+INSERT INTO ARTIST_MELODIE(id_artist, id_melodie) VALUES(2, 17);
+
+SELECT *
+FROM ARTIST_MELODIE
+ORDER BY id_melodie;
+
