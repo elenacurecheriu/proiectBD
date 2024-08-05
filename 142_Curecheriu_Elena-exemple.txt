@@ -1,103 +1,184 @@
---cerinta1
-WITH ALBUM_DETAILS AS (
-    SELECT
-        A.ID_ALBUM,
-        A.TITLU AS TITLU,
-        ART.NUME AS ARTIST,
-        TO_CHAR(A.DATA_LANSARE, 'YYYY') AS ANUL_LANSARII,
-        TO_CHAR(A.DATA_LANSARE, 'MM') AS LUNA_LANSARII,
-        LENGTH(A.TITLU) AS LUNGIME_TITLU,
-        UPPER(A.TITLU) AS TITLU_UPPERCASE,
-        LOWER(A.TITLU) AS TITLU_LOWERCASE
-    FROM
-        ALBUM A
-    JOIN
-        ARTIST ART ON A.ID_ARTIST = ART.ID_ARTIST
-)
-SELECT
-    AD.TITLU,
-    AD.ARTIST,
-    AD.ANUL_LANSARII,
-    AD.LUNA_LANSARII,
-    AD.LUNGIME_TITLU,
-    AD.TITLU_UPPERCASE,
-    AD.TITLU_LOWERCASE
-FROM
-    ALBUM_DETAILS AD;
-    
-    
---cerinta 2
-SELECT A.TITLU AS "TITLU",
-       ART.NUME AS "ARTIST",
-       CASE
-           WHEN G.NUME IS NULL THEN 'fara gen'
-           ELSE G.NUME
-       END AS "GEN",
-       A.DURATA AS "DURATA",
-       CASE
-           WHEN G.NUME IS NULL THEN 'fara gen'
-           WHEN G.NUME = 'pop' THEN 'pop'
-           WHEN G.NUME = 'rock' THEN 'rock'
-           ELSE 'alt gen'
-       END AS "MESSAGE"
-FROM ALBUM A
-JOIN ARTIST ART ON A.ID_ARTIST = ART.ID_ARTIST
-LEFT JOIN GEN_ALBUM GA ON A.ID_ALBUM = GA.ID_ALBUM
-LEFT JOIN GEN G ON GA.ID_GEN = G.ID_GEN
-ORDER BY A.DURATA ASC
-FETCH FIRST 5 ROWS ONLY;
+--cerinta 12
 
+--cerere 1
 
---cerinta 3
 WITH AVG_PRICE AS (
-    SELECT AVG(pret) AS average_price
+    SELECT AVG(pret) AS avg_pret
     FROM ABONAMENT
 ),
-USER_PLAYLIST_COUNT AS (
-    SELECT U.nume AS user_name, NVL(A.pret, 0) AS subscription_price, P.nume AS playlist_name, COUNT(MP.id_melodie) AS song_count
-    FROM UTILIZATOR U
-    JOIN ABONAMENT A ON U.id_abonament = A.id_abonament
-    JOIN PLAYLIST P ON U.id_utilizator = P.id_utilizator
-    JOIN MELODIE_PLAYLIST MP ON P.id_playlist = MP.id_playlist
-    GROUP BY U.nume, A.pret, P.nume
+TABEL AS (
+    SELECT
+        UT.NUME AS NUME_UTILIZATOR,
+        UT.DATA_INREGISTRARE AS DATA_INREGISTRARE,
+        AB.TIP_ABONAMENT AS TIP_ABONAMENT,
+        AB.PRET AS PRET,
+        CONCAT(UT.NUME, UT.TARA) AS NUME_TARA
+    FROM
+        UTILIZATOR UT
+    JOIN
+        ABONAMENT AB ON UT.ID_ABONAMENT = AB.ID_ABONAMENT
+    WHERE
+        TO_NUMBER(TO_CHAR(UT.DATA_INREGISTRARE, 'YYYY')) > 2000
+        AND LENGTH(UT.NUME) > 6
 )
-SELECT user_name, subscription_price, playlist_name
-FROM USER_PLAYLIST_COUNT
-WHERE subscription_price < (SELECT average_price FROM AVG_PRICE) AND song_count >= 2
-ORDER BY user_name ASC;
-
---cerinta 4
 SELECT
-    CD.NUME AS "CASA_DISCURI",
-    CONCAT(CONCAT(CD.NUME_DETINATOR, ' '), CD.PRENUME_DETINATOR) AS "DETINATOR",
-    NVL(A.NUME, 'N/A') AS "ARTIST"
+    T.NUME_TARA,
+    T.DATA_INREGISTRARE,
+    T.TIP_ABONAMENT,
+    T.PRET
 FROM
-    CASA_DISCURI CD
-JOIN
-    ARTIST A ON CD.ID_CASA_DISCURI = A.ID_CASA_DISCURI
+    TABEL T, AVG_PRICE
 WHERE
-    CD.NUME LIKE '%Records%' OR CD.NUME LIKE '%Corporation%'
-ORDER BY
-    CD.NUME ASC;
+    T.PRET <= AVG_PRICE.avg_pret;
     
---cerinta 5
-SELECT 
-    U.NUME AS "NUME",
-    NVL(U.EMAIL, 'N/A') AS "EMAIL",
-    DECODE(U.TARA, 'RO', 'Romania', 'N/A') AS "TARA"
-FROM 
-    UTILIZATOR U
-JOIN 
-    ABONAMENT A ON U.ID_ABONAMENT = A.ID_ABONAMENT
-JOIN 
-    PLAYLIST P ON U.ID_UTILIZATOR = P.ID_UTILIZATOR
-JOIN 
-    MELODIE_PLAYLIST MP ON P.ID_PLAYLIST = MP.ID_PLAYLIST
-WHERE 
-    A.TIP_ABONAMENT = 'student' AND P.DATA_CREARE > TO_DATE('13-OCT-2015', 'DD-MON-YYYY')
-GROUP BY 
-    P.ID_PLAYLIST, U.NUME, U.EMAIL, U.TARA
-HAVING 
-    COUNT(MP.ID_MELODIE) >= 2
-ORDER BY 
-    U.NUME ASC;
+--cerere 2
+
+SELECT *
+FROM (
+    SELECT
+        MEL.TITLU AS TITLU_MELODIE, MEL.DURATA AS DURATA, ALB.TITLU AS TITLU_ALBUM,
+        (SELECT
+             (CASE
+                 WHEN TO_CHAR(ALB.DATA_LANSARE, 'MM') = '01' THEN 'Ianuarie'
+                 WHEN TO_CHAR(ALB.DATA_LANSARE, 'MM') = '02' THEN 'Februarie'
+                 WHEN TO_CHAR(ALB.DATA_LANSARE, 'MM') = '03' THEN 'Martie'
+                 WHEN TO_CHAR(ALB.DATA_LANSARE, 'MM') = '04' THEN 'Aprilie'
+                 WHEN TO_CHAR(ALB.DATA_LANSARE, 'MM') = '05' THEN 'Mai'
+                 WHEN TO_CHAR(ALB.DATA_LANSARE, 'MM') = '06' THEN 'Iunie'
+                 WHEN TO_CHAR(ALB.DATA_LANSARE, 'MM') = '07' THEN 'Iulie'
+                 WHEN TO_CHAR(ALB.DATA_LANSARE, 'MM') = '08' THEN 'August'
+                 WHEN TO_CHAR(ALB.DATA_LANSARE, 'MM') = '09' THEN 'Septembrie'
+                 WHEN TO_CHAR(ALB.DATA_LANSARE, 'MM') = '10' THEN 'Octombrie'
+                 WHEN TO_CHAR(ALB.DATA_LANSARE, 'MM') = '11' THEN 'Noiembrie'
+                 WHEN TO_CHAR(ALB.DATA_LANSARE, 'MM') = '12' THEN 'Decembrie'
+                END
+             )
+         FROM ALBUM ALB
+         WHERE ALB.ID_ALBUM = MEL.ID_ALBUM) AS "LUNA_LANSARE"
+        FROM MELODIE MEL
+        JOIN ALBUM ALB ON MEL.ID_ALBUM = ALB.ID_ALBUM
+        ORDER BY MEL.DURATA DESC
+     )
+WHERE ROWNUM <= 7;
+
+--cerere 3
+
+SELECT DISTINCT
+    PL.NUME AS NUME_PLAYLIST,
+    PL.ID_PLAYLIST AS ID_PLAYLIST,
+    PL.DATA_CREARE AS DATA_CREARE,
+    MONTHS_BETWEEN(SYSDATE, PL.DATA_CREARE) AS NR_LUNI,
+     NVL(COUNT(PL.ID_PLAYLIST), 0) AS NR_MELODII,
+    (
+        SELECT DISTINCT UT.NUME AS "NUME_UTILIZATOR"
+        FROM UTILIZATOR UT
+        WHERE UT.ID_UTILIZATOR = PL.ID_UTILIZATOR
+    ),
+    (
+        SELECT DISTINCT NVL(COUNT(MP.ID_PLAYLIST), 0) AS "NR_MELODII"
+        FROM MELODIE_PLAYLIST MP
+        WHERE MP.ID_PLAYLIST = PL.ID_PLAYLIST
+        GROUP BY MP.ID_PLAYLIST
+    )
+FROM PLAYLIST PL
+JOIN MELODIE_PLAYLIST MP ON PL.ID_PLAYLIST = MP.ID_PLAYLIST
+GROUP BY PL.ID_PLAYLIST, PL.NUME, PL.DATA_CREARE, PL.ID_UTILIZATOR;
+
+--cerere 4
+
+SELECT
+    G.NUME AS NUME_GEN,
+    COUNT(GM.ID_MELODIE) AS NR_MELODII,
+    DECODE(
+    NVL(COUNT(GM.ID_MELODIE), 0),
+    0, 'Nu exista melodii in acest gen',
+    1, 'Exista o melodie in acest gen',
+    'Exista ' || COUNT(GM.ID_MELODIE) || ' melodii in acest gen'
+) AS SONGS_EXIST
+FROM GEN G, GEN_MELODIE GM
+WHERE G.ID_GEN = GM.ID_GEN
+GROUP BY G.NUME, G.ID_GEN
+HAVING COUNT(GM.ID_MELODIE) > 0
+ORDER BY NR_MELODII DESC;
+
+-- cerere 5
+WITH TABEL AS ( --WITH, CERERE NESINCRONIZATA
+    SELECT DISTINCT
+        ART.NUME AS NUME_ARTIST,
+        ART.AN_DEBUT AS AN_DEBUT
+    FROM ARTIST ART
+    JOIN ARTIST_MELODIE AM on ART.id_artist = AM.id_artist
+    JOIN CASA_DISCURI CD on ART.id_casa_discuri = CD.id_casa_discuri
+    WHERE ART.NUME LIKE '%A%' OR ART.NUME LIKE '%a%'
+    GROUP BY ART.NUME, ART.AN_DEBUT
+)
+SELECT
+    T.NUME_ARTIST, T.AN_DEBUT
+FROM TABEL T
+WHERE
+    T.AN_DEBUT BETWEEN 2000 AND 2024
+    AND ( --CERERI SINCRONIZATE
+        SELECT COUNT(AM.ID_MELODIE)
+        FROM ARTIST_MELODIE AM
+        WHERE AM.ID_ARTIST = (
+            SELECT ART.ID_ARTIST
+            FROM ARTIST ART
+            WHERE ART.NUME = T.NUME_ARTIST
+        )
+    ) >= 2
+    AND
+    T.NUME_ARTIST IN (
+        SELECT ART.NUME
+        FROM ARTIST ART
+        JOIN CASA_DISCURI CD ON ART.ID_CASA_DISCURI = CD.ID_CASA_DISCURI
+        WHERE CD.AN_INFIINTARE > 1950
+    )
+ORDER BY T.NUME_ARTIST;
+
+
+-- cerinta 13
+
+-- 1
+
+UPDATE ABONAMENT
+SET pret = pret * 1.1 --pretul creste cu 10%
+WHERE id_abonament IN (
+    SELECT id_abonament
+    FROM UTILIZATOR
+    WHERE EXTRACT(YEAR FROM data_inregistrare) < 2020
+);
+
+SELECT *
+FROM ABONAMENT
+ORDER BY id_abonament;
+
+
+-- 2
+
+DELETE FROM UTILIZATOR
+WHERE id_utilizator NOT IN (
+    SELECT DISTINCT id_utilizator
+    FROM PLAYLIST
+);
+
+
+-- 3
+
+UPDATE CASA_DISCURI
+SET nume = CONCAT(nume, ' special')
+WHERE id_casa_discuri IN (
+    SELECT CD.id_casa_discuri
+    FROM CASA_DISCURI CD
+    JOIN ARTIST ART ON CD.id_casa_discuri = ART.id_casa_discuri
+    WHERE CD.prenume_detinator LIKE 'L%'
+    GROUP BY CD.id_casa_discuri
+    HAVING COUNT(ART.id_artist) >= 2
+);
+
+SELECT *
+FROM CASA_DISCURI
+ORDER BY id_casa_discuri;
+
+
+
+
