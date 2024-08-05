@@ -8,7 +8,7 @@
   - GEN, care poate contine mai multe albume si melodii
   - ARTIST, care poate detine mai multe albume si apartine unei unice case de discuri
   - CASA_DE_DISCURI, care poate avea contractati mai multi artisti
-  - tabele intermediare (GEN_ALBUM, GEN_MELODIE, ARTIST_MELODIE, MELODIE_PLAYLIST), pentru a rezolva relatiile de tip many-to-many\\
+  - tabele intermediare (GEN_ALBUM, GEN_MELODIE, ARTIST_MELODIE, MELODIE_PLAYLIST), pentru a rezolva relatiile de tip many-to-many
 
   Diagrama conceptuala:
 
